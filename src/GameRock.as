@@ -14,7 +14,8 @@ package
 	public class GameRock extends MovieClip 
 	{
 		private var _rock : Rock;
-		
+		public var direction : String;
+		public var isMoving : Boolean;
 		
 		public function GameRock() 
 		{
@@ -32,17 +33,43 @@ package
 		}
 		public function update():void
 		{
-			if (TileSystem.checkTile(x,y,PublicStatics.LEFT) == 9)
+			if (TileSystem.checkTile(x,y,PublicStatics.DOWN) == 6)
 			{
-				if (TileSystem.checkTile(x,y,PublicStatics.DOWN_LEFT) == 9)
+				direction = PublicStatics.DOWN;				
+				isMoving = true;
+				dispatchEvent(new Event(PublicStatics.MOVE_ME,true));
+			}
+			else if (TileSystem.checkTile(x,y,PublicStatics.DOWN) == 3)
+			{
+				if (TileSystem.checkTile(x,y,PublicStatics.LEFT) == 6)
 				{
-					//moveLeft();
+					if (TileSystem.checkTile(x,y,PublicStatics.DOWN_LEFT) == 6)
+					{
+						direction = PublicStatics.LEFT;
+						isMoving = true;
+						dispatchEvent(new Event(PublicStatics.MOVE_ME,true));
+					}
+				}
+				if (TileSystem.checkTile(x,y,PublicStatics.RIGHT) == 6)
+				{
+					if (TileSystem.checkTile(x,y,PublicStatics.DOWN_RIGHT) == 6)
+					{
+						direction = PublicStatics.RIGHT;
+						isMoving = true;
+						dispatchEvent(new Event(PublicStatics.MOVE_ME,true));
+					}
 				}
 			}
-			if (TileSystem.checkTile(x,y,PublicStatics.DOWN) == 9)
-				{
-					//moveDown();
-				}
+			else if (isMoving == true && TileSystem.checkTile(x,y,PublicStatics.DOWN) == 5)
+			{
+				trace("dispatch PlayerExplode");
+			}
+			else 
+			{
+				isMoving = false;
+			}
+			
+				
 		}
 		
 		

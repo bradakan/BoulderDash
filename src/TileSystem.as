@@ -14,7 +14,7 @@ package
 		public var _lvl2 : Array;
 		private var _currentArray : Array;
 		private var _enemy : Enemy;
-		private var _player : Player;
+		private var _player : PlayerClass;
 		private var _goal : Goal;
 		private var _outerWall : OuterWall;
 		private var _rock : Rock;
@@ -54,9 +54,13 @@ package
 			_currentArrayLength = lvlLayout.length;
 			for (var i : uint = 0; i <  _currentArrayLength; i++) 
 			{
-				if (lvlLayout[i] != 9)
+				if (lvlLayout[i] != 6)
 				{
 					addTile(lvlLayout[i], i, _tilesWidth);
+				}
+				else
+				{
+					PublicStatics.LVL_OBJECTS.push(null);
 				}
 			}
 		}
@@ -67,12 +71,25 @@ package
 			{
 				_tile = new OuterWall();
 			}
-			else if (tileNum == 2)
+			else if (tileNum == 3)
 			{
 				_tile = new GameRock();
-				//PublicStatics.MOVABLE_OBJECT.push(_tile);
-
+				PublicStatics.MOVABLE_OBJECT.push(_tile);
 			}			
+			else if (tileNum == 5)
+			{
+				_tile = new PlayerClass();
+				PublicStatics.MOVABLE_OBJECT.push(_tile);
+			}
+			else if (tileNum == 4)
+			{
+				_tile = new PickupClass();
+				PublicStatics.MOVABLE_OBJECT.push(_tile);
+			}
+			else if (tileNum == 2)
+			{
+				_tile = new WallClass();
+			}
 			else
 			{
 				//0 == dirt
@@ -81,54 +98,55 @@ package
 			
 			_tile.x = i % width * _tile.width; 
 			_tile.y = Math.floor(i / width) * _tile.height;
-			//PublicStatics.CURRENT_LVL_OBJECTS.push(_tile);
+			PublicStatics.LVL_OBJECTS.push(_tile);
 			Main.GAME.addChild(_tile);
 		}
 		
 		public static function checkTile (tileX:Number, tileY:Number, checkWhere : String = "this"):Number
 		{
-			if (checkWhere = "this")
+			var arrayNum :Number;
+			if (checkWhere == "this")
 			{
-				var arrayNum : Number = (tileX / PublicStatics.TILE_WIDTH) + (tileY / PublicStatics.TILE_HEIGTH * PublicStatics.LVLWIDTH);
+				arrayNum = (tileX / PublicStatics.TILE_WIDTH) + (tileY / PublicStatics.TILE_HEIGTH * PublicStatics.LVLWIDTH);
 			}
 			if (checkWhere == PublicStatics.DOWN)
 			{
-				var arrayNum : Number = (tileX / PublicStatics.TILE_WIDTH) + (tileY / PublicStatics.TILE_HEIGTH * PublicStatics.LVLWIDTH) + PublicStatics.LVLWIDTH;
+				arrayNum = (tileX / PublicStatics.TILE_WIDTH) + (tileY / PublicStatics.TILE_HEIGTH * PublicStatics.LVLWIDTH) + PublicStatics.LVLWIDTH;
 				
 			}
 			else if (checkWhere == PublicStatics.UP)
 			{
-				var arrayNum : Number = (tileX / PublicStatics.TILE_WIDTH) + (tileY / PublicStatics.TILE_HEIGTH * PublicStatics.LVLWIDTH) - PublicStatics.LVLWIDTH;
+				arrayNum = (tileX / PublicStatics.TILE_WIDTH) + (tileY / PublicStatics.TILE_HEIGTH * PublicStatics.LVLWIDTH) - PublicStatics.LVLWIDTH;
 			}
 			else if (checkWhere == PublicStatics.LEFT)
 			{
-				var arrayNum : Number = (tileX / PublicStatics.TILE_WIDTH) + (tileY / PublicStatics.TILE_HEIGTH * PublicStatics.LVLWIDTH) - 1;
+				arrayNum = (tileX / PublicStatics.TILE_WIDTH) + (tileY / PublicStatics.TILE_HEIGTH * PublicStatics.LVLWIDTH) - 1;
 			}
 			else if (checkWhere == PublicStatics.RIGHT)
 			{
-				var arrayNum : Number = (tileX / PublicStatics.TILE_WIDTH) + (tileY / PublicStatics.TILE_HEIGTH * PublicStatics.LVLWIDTH) + 1;
+				arrayNum  = (tileX / PublicStatics.TILE_WIDTH) + (tileY / PublicStatics.TILE_HEIGTH * PublicStatics.LVLWIDTH) + 1;
 			}
 			else if (checkWhere == PublicStatics.UP_RIGHT)
 			{
-				var arrayNum : Number = (tileX / PublicStatics.TILE_WIDTH) + (tileY / PublicStatics.TILE_HEIGTH * PublicStatics.LVLWIDTH) - PublicStatics.LVLWIDTH + 1;
+				arrayNum = (tileX / PublicStatics.TILE_WIDTH) + (tileY / PublicStatics.TILE_HEIGTH * PublicStatics.LVLWIDTH) - PublicStatics.LVLWIDTH + 1;
 			}
 			else if (checkWhere == PublicStatics.UP_LEFT)
 			{
-				var arrayNum : Number = (tileX / PublicStatics.TILE_WIDTH) + (tileY / PublicStatics.TILE_HEIGTH * PublicStatics.LVLWIDTH) - PublicStatics.LVLWIDTH - 1;
+				arrayNum = (tileX / PublicStatics.TILE_WIDTH) + (tileY / PublicStatics.TILE_HEIGTH * PublicStatics.LVLWIDTH) - PublicStatics.LVLWIDTH - 1;
 			}
 			else if (checkWhere == PublicStatics.DOWN_LEFT)
 			{
-				var arrayNum : Number = (tileX / PublicStatics.TILE_WIDTH) + (tileY / PublicStatics.TILE_HEIGTH * PublicStatics.LVLWIDTH) + PublicStatics.LVLWIDTH - 1;
+				arrayNum = (tileX / PublicStatics.TILE_WIDTH) + (tileY / PublicStatics.TILE_HEIGTH * PublicStatics.LVLWIDTH) + PublicStatics.LVLWIDTH - 1;
 			}
 			else if (checkWhere == PublicStatics.DOWN_RIGHT)
 			{
-				var arrayNum : Number = (tileX / PublicStatics.TILE_WIDTH) + (tileY / PublicStatics.TILE_HEIGTH * PublicStatics.LVLWIDTH) + PublicStatics.LVLWIDTH + 1;
+				arrayNum = (tileX / PublicStatics.TILE_WIDTH) + (tileY / PublicStatics.TILE_HEIGTH * PublicStatics.LVLWIDTH) + PublicStatics.LVLWIDTH + 1;
 			}
 			//return arrayNum;
-			return PublicStatics.CURRENT_LVL_LAYOUT[arrayNum]
+			return PublicStatics.CURRENT_LVL_LAYOUT[arrayNum];
 		}
 		
-		public static function moveTile(movingTile:Class,tileX:Number,tileY:Number,moveWhere:String)
+		public static function moveTile(tileX:Number,tileY:Number,moveWhere:String):void
 		{
 			var currentType:Number = checkTile(tileX,tileY);
 			var arrayNum:Number = (tileX / PublicStatics.TILE_WIDTH) + (tileY / PublicStatics.TILE_HEIGTH * PublicStatics.LVLWIDTH);
@@ -151,9 +169,23 @@ package
 			{
 				targetArrayNum = arrayNum + PublicStatics.LVLWIDTH;
 			}
-			
+			if (PublicStatics.CURRENT_LVL_LAYOUT[arrayNum] == 5)
+			{
+				if (PublicStatics.LVL_OBJECTS[targetArrayNum] != null)
+				{
+					Main.GAME.removeChild(PublicStatics.LVL_OBJECTS[targetArrayNum]);
+					PublicStatics.LVL_OBJECTS[targetArrayNum] = PublicStatics.LVL_OBJECTS[arrayNum];
+					PublicStatics.LVL_OBJECTS[arrayNum] = null;
+				}
+			}
+			if (PublicStatics.CURRENT_LVL_LAYOUT[targetArrayNum] == 4)
+			{
+				trace("points++");
+				//points + score per pickup
+				//pickups till exit --
+			}
 			PublicStatics.CURRENT_LVL_LAYOUT[targetArrayNum] = currentType;
-			PublicStatics.CURRENT_LVL_LAYOUT[arrayNum] = 9;
+			PublicStatics.CURRENT_LVL_LAYOUT[arrayNum] = 6;
 		}
 	}
 
